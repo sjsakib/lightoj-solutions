@@ -14,7 +14,7 @@ class LojSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         super(LojSpider, self).__init__(*args, **kwargs)
-        with open('done.json', 'w+') as f:
+        with open('done.json', 'r') as f:
             text = f.read()
         if text:
             self.done = json.loads(text)
@@ -51,9 +51,13 @@ class LojSpider(scrapy.Spider):
         trs = response.css('#mytable3 tr')
         for tr in trs[1:]:  # skipping the first row
             ver = tr.css('div::text').extract_first().strip()
+            if ver != 'Accepted':
+                continue
             a = tr.css('a')[0]
-            if ver == 'Accepted':
-                yield response.follow(a, callback=self.parse_sub)
+            subid = a.css('::text').extract_first().strip()
+            if subid in self.done:
+                continue
+            yield response.follow(a, callback=self.parse_sub)
 
     def parse_sub(self, response):
         soup = BeautifulSoup(response.text, 'html5lib')
@@ -79,7 +83,6 @@ class LojSpider(scrapy.Spider):
             'mem': mem,
             'code': code,
         }
-        self.done.append(pid)
 
         # To get problem tags
         forum_page = self.forum_url+pid

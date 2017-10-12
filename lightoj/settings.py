@@ -17,6 +17,8 @@ NEWSPIDER_MODULE = 'lightoj.spiders'
 USER = 'sjsakib.bd@gmail.com'
 PASS = os.environ['LOJPASS']
 
+LOG_LEVEL = 'INFO'
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'lightoj (+http://www.yourdomain.com)'
